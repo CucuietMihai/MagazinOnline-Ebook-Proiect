@@ -36,7 +36,7 @@ Cum rulezi aplicatia
 
 1. Ruleaza fisierul principal:
 
-python meniu_principal.py
+  meniu_principal.py
 
 2. Navigheaza prin meniuri pentru a interactiona cu aplicatia.
 
