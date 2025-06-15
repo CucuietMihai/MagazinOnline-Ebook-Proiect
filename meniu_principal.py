@@ -4,13 +4,10 @@ from cos_cumparaturi import CosCumparaturi
 from recenzii import Recenzie
 from contact import formular_contact
 
+# Meniul principal al aplicatiei, apelat la pornirea programului.
+# Permite inregistrare, login, trimitere mesaj de contact sau iesire din aplicatie.
 def meniu_principal():
-    """
-    Meniul principal al aplicatiei, apelat la pornirea programului.
-    Permite inregistrare, login, trimitere mesaj de contact sau iesire din aplicatie.
-    """
     # Initializam toate tabelele din baza de date la pornirea aplicatiei
-
     Utilizator.init_db()
     Produs.init_db()
     CosCumparaturi.init_db()
@@ -44,11 +41,9 @@ def meniu_principal():
         else:
             print("Optiune invalida.")
 
+# Meniul disponibil pentru utilizatorul logat (inclusiv admin).
+# Permite acces la toate functionalitatile aplicatiei.
 def meniu_utilizator(utilizator):
-    """
-    Meniul disponibil pentru utilizatorul logat (inclusiv admin).
-    Permite acces la toate functionalitatile aplicatiei.
-    """
     cos = CosCumparaturi(utilizator.username)
 
     while True:
@@ -65,8 +60,9 @@ def meniu_utilizator(utilizator):
         print("10. Cautare produs")
         print("11. Adauga produs")
         print("12. Sterge produs")
+        print("13. Afiseaza categorii unice de produse")
         if isinstance(utilizator, Admin):
-            print("13. Sterge produs direct (ADMIN)")
+            print("14. Sterge produs direct (ADMIN)")
         print("0. Logout")
 
         opt = input("Alege o optiune: ")
@@ -113,7 +109,9 @@ def meniu_utilizator(utilizator):
             Produs.adauga()
         elif opt == "12":
             Produs.sterge()
-        elif opt == "13" and isinstance(utilizator, Admin):
+        elif opt == "13":
+            Produs.categorii_disponibile()
+        elif opt == "14" and isinstance(utilizator, Admin):
             try:
                 produs_id = int(input("ID produs de sters: "))
                 utilizator.sterge_produs_direct(produs_id)

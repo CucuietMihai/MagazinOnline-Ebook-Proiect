@@ -1,21 +1,16 @@
+# cos_cumparaturi.py
 import sqlite3
 
+#Clasa care gestioneaza cosul de cumparaturi pentru fiecare utilizator.
 class CosCumparaturi:
-    """
-    Clasa care gestioneaza cosul de cumparaturi pentru fiecare utilizator.
-    """
 
+    #Initializeaza un cos de cumparaturi pentru un utilizator dat.
     def __init__(self, username):
-        """
-        Initializeaza un cos de cumparaturi pentru un utilizator dat.
-        """
         self.username = username
 
+    # Creeaza tabela cos in baza de date daca nu exista deja.
     @staticmethod
     def init_db():
-        """
-        Creeaza tabela cos in baza de date daca nu exista deja.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
         cursor.execute('''
@@ -30,11 +25,9 @@ class CosCumparaturi:
         conn.commit()
         conn.close()
 
+    # Adauga produse in cosul de cumparaturi.
+    # Verifica daca produsul exista si daca stocul este suficient.
     def adauga(self, produs_id, cantitate=1):
-        """
-        Adauga produse in cosul de cumparaturi.
-        Verifica daca produsul exista si daca stocul este suficient.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
 
@@ -65,10 +58,8 @@ class CosCumparaturi:
         conn.close()
         print("Produs adaugat in cos.")
 
+    # Afiseaza continutul cosului de cumparaturi si permite aplicarea de cupoane de reducere.
     def vezi(self):
-        """
-        Afiseaza continutul cosului de cumparaturi si permite aplicarea de cupoane de reducere.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
         cursor.execute(''' 
@@ -102,10 +93,8 @@ class CosCumparaturi:
 
         print(f"Total final: {total_general:.2f} RON")
 
+    # Goleste complet cosul de cumparaturi.
     def goleste(self):
-        """
-        Goleste complet cosul de cumparaturi.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
         cursor.execute("DELETE FROM cos WHERE username = ?", (self.username,))
@@ -113,10 +102,8 @@ class CosCumparaturi:
         conn.close()
         print("Cosul a fost golit.")
 
+    # Finalizeaza comanda: verifica stocul si actualizeaza inventarul.
     def finalizeaza(self):
-        """
-        Finalizeaza comanda: verifica stocul si actualizeaza inventarul.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
 
@@ -145,14 +132,21 @@ class CosCumparaturi:
         print("Nu uita sa lasi o recenzie pentru produsele comandate!")
         input("Apasa Enter pentru a reveni la meniul principal.")
 
+    # Valideaza cuponul de reducere introdus.
     @staticmethod
     def valideaza_cupon(cupon):
-        """
-        Valideaza cuponul de reducere introdus.
-        """
         cupon_valid = {
             "DISCOUNT10": 10,
             "DISCOUNT20": 20,
             "DISCOUNT30": 30,
         }
         return cupon_valid.get(cupon.upper(), None)
+
+    # Returneaza un set cu ID-urile produselor unice din cosul utilizatorului.
+    def produse_unice_din_cos(self):
+        conn = sqlite3.connect("magazin_ebook.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT produs_id FROM cos WHERE username = ?", (self.username,))
+        produse = cursor.fetchall()
+        conn.close()
+        return set([p[0] for p in produse])

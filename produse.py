@@ -1,23 +1,17 @@
 import sqlite3
 
+#Clasa care defineste produsele din magazinul de eBook-uri.
 class Produs:
-    """
-    Clasa care defineste produsele din magazinul de eBook-uri.
-    """
 
+    #Initializeaza un obiect de tip Produs.
     def __init__(self, nume=None, pret=None, categorie=None):
-        """
-        Initializeaza un obiect de tip Produs.
-        """
         self.nume = nume
         self.pret = pret
         self.categorie = categorie
 
+    # Creeaza tabela produse in baza de date si insereaza produse initiale daca nu exista deja produse.
     @staticmethod
     def init_db():
-        """
-        Creeaza tabela produse in baza de date si insereaza produse initiale daca nu exista deja produse.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
         cursor.execute('''
@@ -52,11 +46,9 @@ class Produs:
             conn.commit()
         conn.close()
 
+    # Afiseaza toate produsele existente in baza de date.
     @staticmethod
     def listare_produse():
-        """
-        Afiseaza toate produsele existente in baza de date.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
         cursor.execute("SELECT id, nume, pret, categorie, stoc FROM produse")
@@ -65,11 +57,9 @@ class Produs:
         for p in produse:
             print(f"ID: {p[0]}, {p[1]} - {p[2]} RON ({p[3]}) Stoc: {p[4]}")
 
+    # Afiseaza detaliile complete pentru un produs selectat dupa ID.
     @staticmethod
     def afiseaza_detalii(produs_id):
-        """
-        Afiseaza detaliile complete pentru un produs selectat dupa ID.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
         cursor.execute("SELECT nume, descriere, pret, categorie, stoc FROM produse WHERE id = ?", (produs_id,))
@@ -86,11 +76,9 @@ class Produs:
         else:
             print("Produsul nu a fost gasit.")
 
+    # Permite cautarea produselor dupa cuvinte cheie in nume sau descriere.
     @staticmethod
     def cauta(cuvant_cheie):
-        """
-        Permite cautarea produselor dupa cuvinte cheie in nume sau descriere.
-        """
         conn = sqlite3.connect("magazin_ebook.db")
         cursor = conn.cursor()
         query = f"%{cuvant_cheie}%"
@@ -105,11 +93,9 @@ class Produs:
         else:
             print("Niciun produs gasit.")
 
+    # Permite adaugarea manuala a unui produs nou in baza de date.
     @staticmethod
     def adauga():
-        """
-        Permite adaugarea manuala a unui produs nou in baza de date.
-        """
         nume = input("Nume produs: ")
         descriere = input("Descriere: ")
         try:
@@ -128,11 +114,9 @@ class Produs:
         conn.close()
         print("Produs adaugat cu succes.")
 
+    # Permite stergerea unui produs existent din baza de date dupa ID.
     @staticmethod
     def sterge():
-        """
-        Permite stergerea unui produs existent din baza de date dupa ID.
-        """
         try:
             produs_id = int(input("ID produs de sters: "))
         except ValueError:
@@ -154,8 +138,21 @@ class Produs:
         conn.commit()
         conn.close()
 
+    # Afiseaza sumarul obiectului curent de tip Produs.
     def afiseaza(self):
-        """
-        Afiseaza sumarul obiectului curent de tip Produs.
-        """
         print(f"Produs: {self.nume} | Pret: {self.pret} RON | Categorie: {self.categorie}")
+
+    # Returneaza si afiseaza categoriile unice de produse folosind un set.
+    @staticmethod
+    def categorii_disponibile():
+        conn = sqlite3.connect("magazin_ebook.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT categorie FROM produse")
+        categorii = cursor.fetchall()
+        conn.close()
+
+        categorii_unice = set([c[0] for c in categorii])
+        print("\nCategorii disponibile:")
+        for cat in categorii_unice:
+            print(f"- {cat}")
+        return categorii_unice

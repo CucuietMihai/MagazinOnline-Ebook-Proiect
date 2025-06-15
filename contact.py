@@ -1,8 +1,7 @@
+# Permite trimiterea unui mesaj de contact catre administratorul aplicatiei.
+# Mesajele sunt salvate local intr-un fisier text.
+
 def formular_contact():
-    """
-    Permite trimiterea unui mesaj de contact catre administratorul aplicatiei.
-    Mesajele sunt salvate local intr-un fisier text.
-    """
     print("\n--- Formular Contact ---")
     nume = input("Nume: ")
     email = input("Email: ")
